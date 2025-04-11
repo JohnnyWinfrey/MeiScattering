@@ -1,5 +1,5 @@
 import numpy as np
-import csv
+import pandas as pd
 
 def n_max(k, a):
     """Computes maximum n for recursion based on particle properties."""
@@ -20,32 +20,55 @@ def conjugate(a):
     return a*np.conjugate(a)
 
 def exercise_values():
-    a = 5e-6  # Particle radius
-    m_real = 1.59  # Real part of refractive index
-    m_imag = np.array([1e-6, 0.001, 0.1]) * 1j  # Imaginary part as a NumPy array
+    a = 5e-6
+    m_real = 1.59
+    m_imag = np.array([1e-6, 0.001, 0.1]) * 1j
 
-    m = m_real + m_imag  # Complex refractive indices
-    e = np.linspace(0.01, 100, 100)  # Size parameter range
-    k = e / a  # Wavenumber
+    m = m_real + m_imag
+    e = np.linspace(0.01, 100, 100)
+    k = e / a
 
-    # Compute eta for each m and each e (shape: (3, 1000))
-    eta = m[:, np.newaxis] * e  # Broadcasting to get all combinations
+    eta = m[:, np.newaxis] * e
 
-    # Compute n_max for each k (assuming n_max is scalar for each k)
     n_values = np.array([n_max(k_i, a) for k_i in k])  # Shape: (1000,)
 
     return n_values, e, eta, m, k, a
 
 def silicon_values():
-    Col1 = "wl"
-    Col2 = "n"
-    dictionary={Col1:[], Col2:[]}
-    csvFile = csv.reader(open("silicon_Schinke_2015.csv", "rb"))
-    for row in csvFile:
-        dictionary[Col1].append(row[0])
-        dictionary[Col2].append(row[1])
+    a = 5e-6
+    with open('silicon_Schinke_2015.csv', 'r') as f:
+        lines = f.readlines()
 
-    return dictionary
+    split_line = None
+    for i, line in enumerate(lines):
+        if 'wl,k' in line:
+            split_line = i
+            break
+
+    if split_line is None:
+        raise ValueError("Could not find 'wl,k' section in the CSV.")
+
+    lines_n = lines[:split_line]
+    lines_k = lines[split_line:]
+
+    data_n = pd.read_csv(pd.io.common.StringIO(''.join(lines_n)))
+    wl = data_n['wl'].values
+    wl = wl*1e-6
+    n = data_n['n'].values
+
+    data_k = pd.read_csv(pd.io.common.StringIO(''.join(lines_k)))
+    k = data_k['k'].values
+
+    wn = 2*np.pi / wl
+
+    n_values = []
+
+    for i in wn:
+        print(i, a)
+        n_values.append(n_max(i, a))
+
+
+    return wl, n, k, a, n_values
 
 
 

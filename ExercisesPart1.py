@@ -87,9 +87,5 @@ if __name__ == "__main__":
     plt.ylabel("Q_backscattering")
     plt.legend()
 
-    plt.tight_layout()
     plt.show()
 
-    wl_csv = eq.silicon_values()
-
-    print(wl_csv[0])
