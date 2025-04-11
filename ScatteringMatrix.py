@@ -1,96 +1,42 @@
-import Q
-import helper as eq
-import matplotlib.pyplot as plt
 import numpy as np
-import concurrent.futures
-import os
+import MeiCoefficient as mc
+import helper as eq
+import tau
 
-# Q_* functions (unchanged)
-def Q_absorption(n, e, eta, m, k, a):
-    Q_graph = []
-    for i in range(len(e)):
-        Q_graph.append(Q.Q_abs(n[i], e[i], eta[i], m, k[i], a))
-    return Q_graph, e
+n, e, eta, m, k, a= eq.fuller_values()
 
-def Q_backscatter(n, e, eta, m, k, a):
-    Q_graph = []
-    for i in range(len(e)):
-        Q_graph.append(Q.Q_backscatter(n[i], e[i], eta[i], m, k[i], a))
-    return Q_graph, e
+def SMatrix(n, e, eta, m, p, theta):
+    an1, an2 = mc.mie_coefficients(n, e, eta, m)
+    tau1, tau2 = tau.tau_mnp(1, n, p, theta)
 
-def Q_scattering(n, e, eta, m, k, a):
-    Q_graph = []
-    for i in range(len(e)):
-        Q_graph.append(Q.Q_scattering(n[i], e[i], eta[i], m, k[i], a))
-    return Q_graph, e
+    S1 = (1j/e)*sum(((2*n+1)/(n*(n+1)) * ((an1[n-1]*tau1[n])+an2[n-1]*tau2[n]))
+                    for n in range(1, n+1))
 
-# Function to compute all Qs for a single m
-def compute_Qs(i, n, e, eta, m_values, k, a):
-    m = m_values[i]
-    eta_m = eta[i]
-    Qa, _ = Q_absorption(n, e, eta_m, m, k, a)
-    Qb, _ = Q_backscatter(n, e, eta_m, m, k, a)
-    Qs, _ = Q_scattering(n, e, eta_m, m, k, a)
-    return Qa, Qb, Qs
+    S2 = (1j/e)*sum(((2*n+1)/(n*(n+1)) * ((an1[n-1]*tau2[n])+an2[n-1]*tau1[n]))
+                    for n in range(1, n+1))
 
-def compute_Qs_wrapper(i_and_args):
-    i, n, e, eta, m_values, k, a = i_and_args
-    return compute_Qs(i, n, e, eta, m_values, k, a)
+    S11 = (1/2)*(abs(S2)**2 + abs(S1)**2)
+    S12 = (1/2)*(abs(S2)**2 - abs(S1)**2)
+    S33 = (1/2)*(np.conjugate(S2)*S1 + S2*np.conjugate(S1))
+    S34 = (1j/2)*(S1*np.conjugate(S2) - S2*np.conjugate(S1))
 
+    print(f"τ(1,{n},{theta}, 1) = {tau1[n]}")
 
-if __name__ == "__main__":
-    # Load input values
-    n, e, eta, m_values, k, a = eq.exercise_values()
+    print(f"τ(1,{n},{theta}, 2) = {tau2[n]}")
 
-    print("Size of n =", len(n))
-    print("Size of e =", len(e))
-    print("Size of eta =", len(eta[0]))
-    print("Size of m =", len(m_values))
-    print("Size of k =", len(k))
-    print("Size of a =", a)
+    print()
 
-    # Prepare input tuples (i, args...) for each m
-    inputs = [(i, n, e, eta, m_values, k, a) for i in range(len(m_values))]
+    print(f"a_n1 = {an1[n-1]}")
+    print(f"a_n2 = {an2[n-1]}")
 
-    Q_abs = []
-    Q_back = []
-    Q_scat = []
+    print()
 
-    max_workers = os.cpu_count() #+ 2 if you're chill like that
+    print("S1 =", S1)
+    print("S2 =", S2)
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-        results = list(executor.map(compute_Qs_wrapper, inputs))
-    # Unpack results
-    for Qa, Qb, Qs in results:
-        Q_abs.append(Qa)
-        Q_back.append(Qb)
-        Q_scat.append(Qs)
+    print()
 
-    # Plotting
-    plt.figure(0)
-    for i, Qa in enumerate(Q_abs):
-        plt.plot(e, Qa, label=f"m = {m_values[i]}")
-    plt.title("Absorption Efficiency")
-    plt.xlabel("e")
-    plt.ylabel("Q_absorption")
-    plt.legend()
-
-    plt.figure(1)
-    for i, Qs in enumerate(Q_scat):
-        plt.plot(e, Qs, label=f"m = {m_values[i]}")
-    plt.title("Scattering Efficiency")
-    plt.xlabel("e")
-    plt.ylabel("Q_scattering")
-    plt.legend()
-
-    plt.figure(2)
-    for i, Qb in enumerate(Q_back):
-        plt.plot(e, Qb, label=f"m = {m_values[i]}")
-    plt.title("Backscattering Efficiency")
-    plt.xlabel("e")
-    plt.ylabel("Q_backscattering")
-    plt.legend()
-
-    plt.tight_layout()
-    plt.show()
-
+    print("S_11 = %.2f" % S11)
+    print("S_12 = %.2f" % S12)
+    print("S_33 = %.2f" % S33.real)
+    print("S_34 = %.2f" % S34.real)
