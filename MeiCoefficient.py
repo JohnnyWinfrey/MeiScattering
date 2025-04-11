@@ -4,13 +4,11 @@ import helper as eq
 
 def Pz(n, z):
     """Computes p_n(z) = j_n(z) / j_{n-1}(z) for n in [1, n_max]"""
-    p = np.zeros(n + 1, dtype=complex)
-
+    #p = np.zeros(n + 1, dtype=complex)
 
     jn = sp.spherical_jn(n, z)
     jn_1 = sp.spherical_jn(n - 1, z)
     p = jn / jn_1
-
     return p
 
 def Qz(n, e):
@@ -24,14 +22,17 @@ def chi_n(n, e):
 
 def psi_n(n, e):
     """Computes ψ_n using p recursions and initial conditions"""
-    psi_1 = (np.sin(e)/e) - np.cos(e)
-    p_values = Pz(n, e)
+    #psi_1 = (np.sin(e)/e) - np.cos(e)
+    #p_values = Pz(n, e)
     return e*sp.spherical_jn(n, e)#psi_1 * np.prod(p_values[1:n])
 
 def A_n(n, z):
     """Computes A_n(z) using Pz"""
     pz = Pz(n, z)
     return -(n / z) + (1 / pz)
+
+def psi_prime(n, e):
+    return A_n(n, e) * psi_n(n, e)
 
 def B_n(n, e):
     """Computes B_n(z) using Qz"""
@@ -77,3 +78,9 @@ def mie_coefficients(n_max, e, eta, m):
         #      f"{psi.real:20.10E} {chi:20.10E} ")
 
     return a_n1, a_n2 # Return Mei coefficients!
+
+def cn(n, m, e, eta):
+    an1, an2 = mie_coefficients(n, e, eta, m)
+    cn1 = (1j*m*an1)/(m*psi_prime(n, e)*psi_n(n, eta) - psi_n(n, e)*psi_prime(n, eta))
+    cn2 = (1j * m * an2) / (m * psi_n(n, e) * psi_prime(n, eta) - psi_prime(n, e) * psi_n(n, eta))
+    return cn1, cn2

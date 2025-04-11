@@ -64,11 +64,27 @@ def silicon_values():
     n_values = []
 
     for i in wn:
-        print(i, a)
         n_values.append(n_max(i, a))
 
 
     return wl, n, k, a, n_values
 
+def ExercisePart4():
+    a = np.linspace(0.01e-6, 5e-6, 64)
 
+    m = np.array([5.423 + 1j * 2.9078, 5.623 + 1j * 3.2627e-01, 3.931 + 1j * 1.8521e-02])
+    wl = np.array([350e-9, 400e-9, 600e-9])
+
+    k = 2 * np.pi / wl
+
+    e = np.outer(k, a)
+    eta = m[:, np.newaxis] * e
+
+    n = np.empty((len(k), len(a)))
+
+    for i in range(len(k)):
+        for j in range(len(a)):
+            n[i, j] = n_max(k[i], a[j])
+
+    return n, e, eta, m, k, a
 
