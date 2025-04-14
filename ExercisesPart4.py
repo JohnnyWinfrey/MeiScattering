@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import MeiCoefficient as mc
+import scipy as sp
 """NOTES"""
 """I need to fix that ka is set to it's maximum value for all values of lambda and not for each value of lambda. 
     I also need to figure out how to handle psi prime and psi_n since they do not return arrays.
@@ -9,6 +10,33 @@ import MeiCoefficient as mc
 
 pi = np.pi
 r = 5e-6
+
+def psi_n(n_max, e):
+    psi = []
+    for n in range(1, n_max+1):
+        psi.append(e * sp.spherical_jn(n, e))
+    return psi
+
+def Pz(n, z):
+    """Computes p_n(z) = j_n(z) / j_{n-1}(z) for n in [1, n_max]"""
+    #p = np.zeros(n + 1, dtype=complex)
+
+    jn = sp.spherical_jn(n, z)
+    jn_1 = sp.spherical_jn(n - 1, z)
+    p = jn / jn_1
+    return p
+
+def A_n(n, z):
+    """Computes A_n(z) using Pz"""
+    pz = Pz(n, z)
+    return -(n / z) + (1 / pz)
+
+def psi_prime(n, e):
+    return A_n(n, e) * psi_n(n, e)
+
+
+#def psi_prime(n_max, e):
+
 
 # Complex refractive indices for each wavelength
 m_list = np.array([
@@ -21,7 +49,7 @@ m_list = np.array([
 wavelengths = np.array([350e-9, 400e-9, 600e-9])
 
 # kr range: from 0.1e-6 to ka + 1
-n_points = 10
+n_points = 100
 ka = 2 * pi * r / min(wavelengths)  # max kr for smallest wavelength
 kr_values = np.linspace(0.1e-6, ka + 1, n_points)
 
@@ -62,7 +90,6 @@ for idx, lam in enumerate(wavelengths):
         C_a_prime.append(C_a)
 
     results[lam] = C_a_prime
-
 # Plotting
 plt.figure(figsize=(8,6))
 for lam in wavelengths:
@@ -74,3 +101,4 @@ plt.title("Absorption Cross Section $C'_a$ vs $kr$")
 plt.legend()
 plt.grid(True)
 plt.show()
+

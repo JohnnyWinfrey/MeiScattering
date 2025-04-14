@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def tau_mnp(m, n_max, p, x):
+def tau_mnp(m, n_max, x):
     """Computes τ_mnp using recursion up to n_max."""
 
     # Array to store tau values (initialize with zeros)
@@ -9,15 +9,14 @@ def tau_mnp(m, n_max, p, x):
     tau2 = np.zeros(n_max + 2)
 
     # Set initial conditions explicitly
-    if m == 0 and p == 2:
+    if m == 0:
         tau2[0] = 0
-    elif m == 0 and p == 1:
         tau1[0] = 0
         tau1[1] = np.sqrt(1 - x ** 2)
-    elif m == 1 and p == 2:
+    elif m == 1:
         tau2[1] = 1
-    elif m == 1 and p == 1:
         tau1[1] = -x
+
 
     # Compute τ recursively
     for n in range(2, n_max + 1):

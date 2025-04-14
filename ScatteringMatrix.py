@@ -5,14 +5,17 @@ import tau
 
 n, e, eta, m, k, a= eq.fuller_values()
 
-def SMatrix(n, e, eta, m, p, theta):
+def SMatrix(n, e, eta, m, theta):
     an1, an2 = mc.mie_coefficients(n, e, eta, m)
-    tau1, tau2 = tau.tau_mnp(1, n, p, theta)
+    tau1, tau2 = tau.tau_mnp(1, n, theta)
 
-    S1 = (1j/e)*sum(((2*n+1)/(n*(n+1)) * ((an1[n-1]*tau1[n])+an2[n-1]*tau2[n]))
+    test = 3/2* (an1[0]*tau1[1]+an2[0]*tau2[1])
+    print(test)
+
+    S1 = sum(((2*n+1)/(n*(n+1)) * ((an1[n-1]*tau1[n])+an2[n-1]*tau2[n]))
                     for n in range(1, n+1))
 
-    S2 = (1j/e)*sum(((2*n+1)/(n*(n+1)) * ((an1[n-1]*tau2[n])+an2[n-1]*tau1[n]))
+    S2 = sum(((2*n+1)/(n*(n+1)) * ((an1[n-1]*tau2[n])+an2[n-1]*tau1[n]))
                     for n in range(1, n+1))
 
     S11 = (1/2)*(abs(S2)**2 + abs(S1)**2)
@@ -20,14 +23,10 @@ def SMatrix(n, e, eta, m, p, theta):
     S33 = (1/2)*(np.conjugate(S2)*S1 + S2*np.conjugate(S1))
     S34 = (1j/2)*(S1*np.conjugate(S2) - S2*np.conjugate(S1))
 
-    print(f"τ(1,{n},{theta}, 1) = {tau1[n]}")
-
-    print(f"τ(1,{n},{theta}, 2) = {tau2[n]}")
-
     print()
 
-    print(f"a_n1 = {an1[n-1]}")
-    print(f"a_n2 = {an2[n-1]}")
+    print(f"a_n1 = {an1[0]}")
+    print(f"a_n2 = {an2[0]}")
 
     print()
 
@@ -40,3 +39,4 @@ def SMatrix(n, e, eta, m, p, theta):
     print("S_12 = %.2f" % S12)
     print("S_33 = %.2f" % S33.real)
     print("S_34 = %.2f" % S34.real)
+
