@@ -1,6 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import MeiCoefficient as mc
+"""NOTES"""
+"""I need to fix that ka is set to it's maximum value for all values of lambda and not for each value of lambda. 
+    I also need to figure out how to handle psi prime and psi_n since they do not return arrays.
+    There's also the issue of putting an if statement in for when the radius exits the sphere. i.e. setting m
+    equal to 1+0j since it would be in air. """
 
 pi = np.pi
 r = 5e-6
