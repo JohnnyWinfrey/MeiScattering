@@ -10,9 +10,6 @@ import scipy.special as sp
     There's also the issue of putting an if statement in for when the radius exits the sphere. i.e. setting m
     equal to 1+0j since it would be in air. """
 
-pi = np.pi
-r = 5e-5  # radius in meters
-
 def psi_n(n_max, e):
     """Computes psi_n = e * j_n(e) for n from 1 to n_max."""
     psi = []
@@ -56,6 +53,8 @@ m_list = np.array([
     3.931 + 1j * 0.018521        # for 600 nm
 ])
 
+pi = np.pi
+r = 5e-6  # radius in meters
 
 wavelengths = np.array([350e-9, 400e-9, 600e-9])
 
@@ -70,6 +69,10 @@ for idx, lam in enumerate(wavelengths):
     m_value = m_list[idx]
     k = 2 * pi / lam
     C_a_prime_list = []
+    ka_m = k*r
+    eta_m = m_value*ka_m
+    nn = int(ka_m + 4 * ka_m**(1/3) + 2)
+    cn1_array, cn2_array = mc.cn(nn, m_value, ka_m, eta_m)
 
     for kr in kr_values:
         print(f"Computing for kr = {kr:.3e} / {max(kr_values):.3e}")
@@ -87,21 +90,18 @@ for idx, lam in enumerate(wavelengths):
         psi_prime_values = psi_prime_n(n_max, kr)
         psi_star = np.conj(psi_n(n_max, kr))
 
-        cn1_array, cn2_array = mc.cn(n_max, m_value, kr, eta)
-
         terms = (2 * n_array + 1) * np.real(
             1j * psi_prime_values * psi_star * (
-                m_value * np.abs(cn1_array)**2 + np.conj(m_value) * np.abs(cn2_array)**2
+                m_value * np.abs(cn1_array[-1])**2 + np.conj(m_value) * np.abs(cn2_array[-1])**2
             )
         )
 
         sum_term = np.sum(terms)
 
-        C_a = (2 * pi) / (np.abs(m_value)**2 * k**2) * sum_term
+        C_a = (-2 * pi) / (np.abs(m_value)**2 * k**2) * sum_term
         C_a_prime_list.append(C_a)
 
     results[lam] = C_a_prime_list
-    print(C_a_prime_list)
 
 # Plotting
 plt.figure(figsize=(8, 6))
