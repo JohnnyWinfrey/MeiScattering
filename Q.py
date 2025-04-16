@@ -28,6 +28,11 @@ def Q_abs(n, e, eta, m, k, a):
     Q_abs = (C_ext - C_sca) / (np.pi * a**2)
     return Q_abs
 
+def C_ext(n, e, eta, m, k, a):
+    a_n1, a_n2 = mc.mie_coefficients(n, e, eta, m)
+    C_ext = (2 * np.pi / k ** 2) * sum((2 * n + 1) * (a_n1[n - 1].real + a_n2[n - 1].real) for n in range(1, n + 1))
+    return C_ext
+
 def Q_backscatter(n, e, eta, m, k, a):
     a_n1, a_n2 = mc.mie_coefficients(n, e, eta, m)
     Q = (1/e**2)*abs((sum((-1**n)*(2*n+1)*(a_n1[n-1]-a_n2[n-1]) for n in range(1, n+1))))**2
