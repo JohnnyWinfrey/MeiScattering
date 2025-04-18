@@ -22,6 +22,9 @@ def SMatrix(n, e, eta, m, theta):
     C_ext_S = 4*np.pi / k**2 * S1.real
     C_ext_direct = q.C_ext(n, e, eta, m, k, a) #* (np.pi * a**2)
 
+    print("k =", k**2)
+    print()
+
     print("C_ext from S1 =", C_ext_S)
     print("C_ext from direct expansion =", C_ext_direct)
     S11 = (1/2)*(abs(S2)**2 + abs(S1)**2)

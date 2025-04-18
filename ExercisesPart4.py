@@ -54,28 +54,24 @@ m_list = np.array([
 ])
 
 pi = np.pi
-r = 5e-6  # radius in meters
+r = np.linspace(0.1e-6, 5e-6, 100)  # radius in meters
 
 wavelengths = np.array([350e-9, 400e-9, 600e-9])
-
-n_points = 100
-ka = 2 * pi * r / min(wavelengths)  # max kr for smallest wavelength
-kr_values = np.linspace(1e-6, ka + 1, n_points)
-
 results = {}
 
 # Loop over wavelengths
 for idx, lam in enumerate(wavelengths):
+
     m_value = m_list[idx]
     k = 2 * pi / lam
     C_a_prime_list = []
     ka_m = k*r
     eta_m = m_value*ka_m
-    nn = int(ka_m + 4 * ka_m**(1/3) + 2)
-    cn1_array, cn2_array = mc.cn(nn, m_value, ka_m, eta_m)
+    nn = int(ka_m[-1] + 4 * ka_m[-1]**(1/3) + 2)
+    cn1_array, cn2_array = mc.cn(nn, m_value, ka_m[-1], eta_m)
 
-    for kr in kr_values:
-        print(f"Computing for kr = {kr:.3e} / {max(kr_values):.3e}")
+    for kr in ka_m:
+        print(f"Computing for kr = {kr:.3e} / {max(ka_m):.3e}")
 
         n_max = int(kr + 4 * kr**(1/3) + 2)
 
