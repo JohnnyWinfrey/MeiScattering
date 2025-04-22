@@ -88,3 +88,20 @@ def ExercisePart4():
 
     return n, e, eta, m, k, a
 
+def ExercisePart5():
+    a = 1e-6
+
+    m = np.array([5.423 + 1j * 2.9078, 5.623 + 1j * 3.2627e-01, 3.931 + 1j * 1.8521e-02])
+    wl = np.array([350e-9, 400e-9, 600e-9])
+
+    k = 2 * np.pi / wl
+
+    e = np.outer(k, a)
+    eta = m[:, np.newaxis] * e
+
+    n = []
+
+    for i in range(len(k)):
+        n.append(n_max(k[i], a))
+
+    return n, e, eta, m, k, a, wl
