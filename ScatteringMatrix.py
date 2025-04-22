@@ -10,10 +10,10 @@ def SMatrix(n, e, eta, m, theta):
     an1, an2 = mc.mie_coefficients(n, e, eta, m)
     tau1, tau2 = tau.tau_mnp(1, n, theta)
 
-    S1 = sum(((2*n+1)/(n*(n+1)) * ((an1[n-1]*tau1[n])-an2[n-1]*tau2[n]))
+    S1 = 1j/k * sum(((2*n+1)/(n*(n+1)) * ((an1[n-1]*tau1[n])-an2[n-1]*tau2[n]))
                     for n in range(1, n+1))
 
-    S2 = sum(((2*n+1)/(n*(n+1)) * ((-1*an1[n-1]*tau2[n])+an2[n-1]*tau1[n]))
+    S2 = 1j/k * sum(((2*n+1)/(n*(n+1)) * ((-1*an1[n-1]*tau2[n])+an2[n-1]*tau1[n]))
                     for n in range(1, n+1))
 
     C_ext_S = 4*np.pi / k**2 * S1.real
@@ -33,10 +33,10 @@ def SMatrix(n, e, eta, m, theta):
     #print("S1 =", S1)
     #print("S2 =", S2)
     #print()
-    #print("S_11 = %.2f" % S11)
-    #print("S_12 = %.2f" % S12)
-    #print("S_33 = %.2f" % S33.real)
-    #print("S_34 = %.2f" % S34.real)
+    print("S_11 = %.2f" % S11)
+    print("S_12 = %.2f" % S12)
+    print("S_33 = %.2f" % S33.real)
+    print("S_34 = %.2f" % S34.real)
 
     return S11, S12, S33, S34
 

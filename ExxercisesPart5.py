@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 n, e, eta, m, k, a, wavelengths = eq.ExercisePart5()
 
 theta_deg = np.arange(0, 180, 1)  # 0° to 180° in 1° steps
-theta_rad = np.radians(theta_deg)
+theta_rad = np.cos(np.radians(theta_deg))
 
 for idx, lam in enumerate(wavelengths):
     S11_list = []
