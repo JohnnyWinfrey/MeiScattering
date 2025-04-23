@@ -66,7 +66,6 @@ def silicon_values():
     for i in wn:
         n_values.append(n_max(i, a))
 
-
     return wl, n, k, a, n_values
 
 def ExercisePart4():

@@ -14,7 +14,7 @@ def Q_absorption(n, e, eta, m, k, a):
 
 def Q_backscatter(n, e, eta, m, k, a):
     Q_graph = []
-    for i in tqdm(range(len(e)), desc=f"Backscatter", position=1, leave=False):
+    for i in range(len(e)):
         Q_graph.append(Q.Q_backscatter(n[i], e[i], eta[i], m[i], k[i], a))
     return Q_graph, e
 
