@@ -104,3 +104,15 @@ def ExercisePart5():
         n.append(n_max(k[i], a))
 
     return n, e, eta, m, k, a, wl
+
+def ProjectValues():
+    e_host = 13.1213853164934
+    e_core = 0.358141562509236
+    wl = 3
+    k = 2*np.pi/wl
+    radius_host = 6.26500000000000
+    radius_core = 0.171000000000000
+    m_host = 1.40900000000000+1j*0.174700000000000
+    m_core = 1.59000000000000+1j*0.660000000000000
+    n = n_max(k, radius_host)
+    return n, e_host, e_core, wl, radius_host, radius_core, m_host, m_core
