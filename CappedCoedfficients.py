@@ -16,10 +16,10 @@ def Cn(n, e):
     return C
 
 def zeta_n(n, e):
-    return e*(sp.spherical_yn(n, e) + sp.spherical_jn(n, e))
+    return e*(sp.spherical_jn(n, e)+sp.spherical_yn(n, e))
 
 def zeta_prime(n, e):
-    zeta = e*(sp.spherical_yn(n, e) + sp.spherical_jn(n, e))
+    zeta = zeta_n(n, e)
     zeta_prime = Cn(n, e)*zeta
     return zeta_prime
 
