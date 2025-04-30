@@ -3,10 +3,12 @@ import scipy.special as sp
 import helper as eq
 import numpy as np
 
+def hankel(n, e):
+    return sp.spherical_jn(n, e) + 1j*sp.spherical_yn(n, e)
 
 def q_cap(n, e):
-    hn1 = sp.spherical_yn(n, e) + sp.spherical_jn(n, e)
-    hn0 = sp.spherical_yn(n-1, e) + sp.spherical_jn(n-1, e)
+    hn1 = hankel(n, e)
+    hn0 = hankel(n-1, e)
     q = hn1/hn0
     return q
 
@@ -16,7 +18,7 @@ def Cn(n, e):
     return C
 
 def zeta_n(n, e):
-    return e*(sp.spherical_jn(n, e)+sp.spherical_yn(n, e))
+    return e*hankel(n, e)
 
 def zeta_prime(n, e):
     zeta = zeta_n(n, e)
