@@ -114,5 +114,5 @@ def ProjectValues():
     radius_core = 0.171000000000000
     m_host = 1.40900000000000+1j*0.174700000000000
     m_core = 1.59000000000000+1j*0.660000000000000
-    n = n_max(k, radius_host)
+    n = 32#n_max(k, radius_host)
     return n, e_host, e_core, wl, radius_host, radius_core, m_host, m_core

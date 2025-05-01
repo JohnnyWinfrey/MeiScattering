@@ -3,6 +3,9 @@ import scipy.special as sp
 import helper as eq
 import numpy as np
 
+from MeiCoefficient import psi_prime, psi_n
+
+
 def hankel(n, e):
     return sp.spherical_jn(n, e) + 1j*sp.spherical_yn(n, e)
 
@@ -34,32 +37,60 @@ def an1_1(n_max, e, m):
         a_n1[n] = -1*num/denom
     return a_n1
 
-def an2_1(n, e, eta, m):
-
-    num = zeta_n(n, eta)*m*Cn(n, eta)-Cn(n, e)
-    denom = mc.psi_n(n, eta)*m*mc.A_n(n, eta)-Cn(n, e)
-    return num/denom
-
-def an1_2(n_max, e, m1, m2):
-    a_n1 = np.zeros(n_max, dtype=complex)
+def an2_1(n_max, e, m):
+    eta = e * m
+    a_n2 = np.zeros(n_max, dtype=complex)
     for n in range(1, n_max):
-        m = m2/m1
-        eta_plus = e*m1
-        eta_minus = e*m2
-        num = m*mc.psi_prime(n, eta_plus)*mc.psi_n(n, eta_minus) - mc.psi_n(n, eta_plus)*mc.psi_prime(n, eta_minus)
-        denom = m*zeta_prime(n, eta_plus)*mc.psi_n(n, eta_minus) - zeta_n(n, eta_plus)*mc.psi_prime(n, eta_minus)
-        a_n1[n] = -1*num/denom
+        num = zeta_n(n, eta)*(m*Cn(n, eta)-Cn(n, e))
+        denom = mc.psi_n(n, eta)*(m*mc.A_n(n, eta)-Cn(n, e))
+        a_n2[n] = -1*num/denom
+    return a_n2
+
+def an1_2(n_max, e_host, e_core, m1, m2):
+    m = m2 / m1
+    a_n1 = np.zeros(n_max + 1, dtype=complex)
+    eta = e_host*m1
+    for n in range(1, n_max + 1):
+
+        num = mc.psi_n(n, eta)*zeta_prime(n, eta)-zeta_n(n, eta)*psi_prime(n, eta)
+        denom = m1*zeta_prime(n, e_host)*mc.psi_n(n, eta)-zeta_n(n, e_host)*mc.psi_prime(n, eta)
+
+        a_n1[n] = num/denom
+
     return a_n1
 
-def an2_2(n, e, m1, m2):
+
+def an2_2(n_max, e_host, e_core, m1, m2):
+    eta=e_host*m1
+    a_n2 = np.zeros(n_max, dtype=complex)
+    for n in range(1, n_max):
+        num = mc.psi_n(n, eta)*zeta_prime(n, eta)-zeta_n(n, eta)*mc.psi_prime(n, eta)
+        denom = m1*zeta_n(n, e_host)*mc.psi_prime(n, eta)-zeta_prime(n, e_host)*mc.psi_n(n, eta)
+        a_n2[n] = -num/denom
+    return a_n2
+
+
+"""def c_cap(n_max, e_host, e_core, m1, m2):
     m = m2/m1
-    eta_plus = e*m1
-    eta_minus = e*m2
-    num = m*mc.psi_n(n, eta_plus)*mc.psi_prime(n, eta_minus) - mc.psi_prime(n, eta_plus)*mc.psi_n(n, eta_minus)
-    denom = m*zeta_n(n, eta_plus)*mc.psi_prime(n, eta_minus) - zeta_prime(n, eta_plus)*mc.psi_n(n, eta_minus)
-    return -num/denom
+    eta_plus = e_host*m1
+    eta_minus = e_core*m2
+    a_n2 = np.zeros(n_max, dtype=complex)
+    for n in range(1, n_max):
+        num = mc.psi_n(n, eta_plus)*zeta_prime(n, eta_plus)-m1*zeta_n(n, eta_plus)*psi_prime(n, eta_plus)
+        denom = m1*zeta_prime(n, e_host)*psi_n(n, eta_plus)-zeta_n(n, e_host)*psi_prime(n, eta_plus)
+        a_n2[n] = -(1+(1j*num/denom))**-1
+    return a_n2"""
 
 n, e_host, e_core, wl, radius_host, radius_core, m_host, m_core = eq.ProjectValues()
 an11 = an1_1(n, e_host, m_host)
+an21 = an2_1(n, e_host, m_host)
+an12 = an1_2(n, e_host, e_core, m_host, m_core)
+an22 = an2_2(n, e_host, e_core, m_host, m_core)
 
-print(an11)
+for i in range(1, n):
+    print("n =", i)
+    print("acap_11 =", an11[i])
+    print("acap_21 =", an21[i])
+    print("acap_12 =", an12[i])
+    print("acap_22 =", an22[i])
+    print()

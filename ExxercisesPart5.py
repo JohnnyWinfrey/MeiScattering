@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 n, e, eta, m, k, a, wavelengths = eq.ExercisePart5()
 
-theta_deg = np.arange(0, 180, 1)  # 0° to 180° in 1° steps
+theta_deg = np.arange(0, 180, 1)
 theta_rad = np.cos(np.radians(theta_deg))
 
 for idx, lam in enumerate(wavelengths):
@@ -40,7 +40,7 @@ for idx, lam in enumerate(wavelengths):
     S33_array = np.array(S33_list)
     S34_array = np.array(S34_list)
 
-    S11_norm = S11_array / S11_array[0]  # S11(θ) / S11(0)
+    S11_norm = S11_array / S11_array[0]
     S12_norm = S12_array / S11_array[0]
     S33_norm = S33_array / S11_array[0]
     S34_norm = S34_array / S11_array[0]
@@ -50,7 +50,7 @@ for idx, lam in enumerate(wavelengths):
     plt.plot(theta_deg, S12_norm, label='$S_{12}$')
     plt.plot(theta_deg, S33_norm, label='$S_{33}$')
     plt.plot(theta_deg, S34_norm, label='$S_{34}$')
-    plt.xlabel('Scattering Angle (degrees)')
+    plt.xlabel('Theta')
     plt.ylabel('Normalized Scattering Matrix Elements')
     plt.title(f'Normalized Scattering Matrix Elements at λ = {lam * 1e9:.0f} nm')
     plt.legend()
