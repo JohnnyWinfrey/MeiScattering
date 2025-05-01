@@ -70,17 +70,6 @@ def an2_2(n_max, e_host, e_core, m1, m2):
     return a_n2
 
 
-"""def c_cap(n_max, e_host, e_core, m1, m2):
-    m = m2/m1
-    eta_plus = e_host*m1
-    eta_minus = e_core*m2
-    a_n2 = np.zeros(n_max, dtype=complex)
-    for n in range(1, n_max):
-        num = mc.psi_n(n, eta_plus)*zeta_prime(n, eta_plus)-m1*zeta_n(n, eta_plus)*psi_prime(n, eta_plus)
-        denom = m1*zeta_prime(n, e_host)*psi_n(n, eta_plus)-zeta_n(n, e_host)*psi_prime(n, eta_plus)
-        a_n2[n] = -(1+(1j*num/denom))**-1
-    return a_n2"""
-
 n, e_host, e_core, wl, radius_host, radius_core, m_host, m_core = eq.ProjectValues()
 an11 = an1_1(n, e_host, m_host)
 an21 = an2_1(n, e_host, m_host)
