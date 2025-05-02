@@ -71,15 +71,29 @@ def an2_2(n_max, e_host, e_core, m1, m2):
 
 
 n, e_host, e_core, wl, radius_host, radius_core, m_host, m_core = eq.ProjectValues()
-an11 = an1_1(n, e_host, m_host)
-an21 = an2_1(n, e_host, m_host)
-an12 = an1_2(n, e_host, e_core, m_host, m_core)
-an22 = an2_2(n, e_host, e_core, m_host, m_core)
+eta = e_host*m_host
+
+
+a_cap_1n1 = an1_1(n, e_host, m_host)
+a_cap_1n2 = an2_1(n, e_host, m_host)
+c_cap_1n1 = an1_2(n, e_host, e_core, m_host, m_core)
+c_cap_1n2 = an2_2(n, e_host, e_core, m_host, m_core)
+
+a_1n1, a_1n2 = mc.mie_coefficients(n, e_host, eta, m_host)
+a_1n1 = -a_1n1
+a_1n2 = -a_1n2
+
+c_1n1, c_1n2 = mc.cn(n, m_host, e_host, eta)
+c_1n2 = -c_1n2
 
 for i in range(1, n):
     print("n =", i)
-    print("acap_11 =", an11[i])
-    print("acap_21 =", an21[i])
-    print("acap_12 =", an12[i])
-    print("acap_22 =", an22[i])
+    print("a_1n1 =", a_1n1[i-1])
+    print("a_1n2 =", a_1n2[i-1])
+    print("cn =", c_1n1[i])
+    print("dn =", c_1n2[i])
+    print("acap_11 =", a_cap_1n1[i])
+    print("acap_21 =", a_cap_1n2[i])
+    print("acap_12 =", c_cap_1n1[i])
+    print("acap_22 =", c_cap_1n2[i])
     print()

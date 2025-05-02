@@ -43,3 +43,4 @@ def Q_scattering(n, e, eta, m, k, a):
     C_sca = (2*np.pi/k**2) * sum((2*n + 1) * (abs(a_n1[n-1])**2 + abs(a_n2[n-1])**2) for n in range(1, n+1))
     Q_sca = C_sca / (np.pi * a**2)
     return Q_sca
+

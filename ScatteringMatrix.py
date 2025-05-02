@@ -26,13 +26,6 @@ def SMatrix(n, e, eta, m, theta):
     S33 = (1/2)*(np.conjugate(S2)*S1 + S2*np.conjugate(S1))
     S34 = (1j/2)*(S1*np.conjugate(S2) - S2*np.conjugate(S1))
 
-    #print()
-    #print(f"a_n1 = {an1[0]}")
-    #print(f"a_n2 = {an2[0]}")
-    #print()
-    #print("S1 =", S1)
-    #print("S2 =", S2)
-    #print()
     print("S_11 = %.2f" % S11)
     print("S_12 = %.2f" % S12)
     print("S_33 = %.2f" % S33.real)
