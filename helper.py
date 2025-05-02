@@ -66,7 +66,6 @@ def silicon_values():
     for i in wn:
         n_values.append(n_max(i, a))
 
-
     return wl, n, k, a, n_values
 
 def ExercisePart4():
@@ -88,3 +87,32 @@ def ExercisePart4():
 
     return n, e, eta, m, k, a
 
+def ExercisePart5():
+    a = 1e-6
+
+    m = np.array([5.423 + 1j * 2.9078, 5.623 + 1j * 3.2627e-01, 3.931 + 1j * 1.8521e-02])
+    wl = np.array([350e-9, 400e-9, 600e-9])
+
+    k = 2 * np.pi / wl
+
+    e = np.outer(k, a)
+    eta = m[:, np.newaxis] * e
+
+    n = []
+
+    for i in range(len(k)):
+        n.append(n_max(k[i], a))
+
+    return n, e, eta, m, k, a, wl
+
+def ProjectValues():
+    e_host = 13.1213853164934
+    e_core = 0.358141562509236
+    wl = 3
+    k = 2*np.pi/wl
+    radius_host = 6.26500000000000
+    radius_core = 0.171000000000000
+    m_host = 1.40900000000000+1j*0.174700000000000
+    m_core = 1.59000000000000+1j*0.660000000000000
+    n = 32#n_max(k, radius_host)
+    return n, e_host, e_core, wl, radius_host, radius_core, m_host, m_core

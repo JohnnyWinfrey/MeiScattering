@@ -54,62 +54,64 @@ m_list = np.array([
 ])
 
 pi = np.pi
-r = 5e-6  # radius in meters
+r = np.linspace(0.1e-6, 5e-6, 500)  # radius in meters
 
 wavelengths = np.array([350e-9, 400e-9, 600e-9])
-
-n_points = 100
-ka = 2 * pi * r / min(wavelengths)  # max kr for smallest wavelength
-kr_values = np.linspace(1e-6, ka + 1, n_points)
-
 results = {}
 
-# Loop over wavelengths
 for idx, lam in enumerate(wavelengths):
+    print(f"Computing for lambda = {lam}")
     m_value = m_list[idx]
-    k = 2 * pi / lam
-    C_a_prime_list = []
-    ka_m = k*r
+    k = 2 * pi / lam # wavenumber for a given wavelength
+    C_a_prime_list = [] # initializing absorption cross-section array
+    ka_m = k*r # calculating rho for a given wavenumber
     eta_m = m_value*ka_m
-    nn = int(ka_m + 4 * ka_m**(1/3) + 2)
-    cn1_array, cn2_array = mc.cn(nn, m_value, ka_m, eta_m)
+    nn = int(ka_m[-1] + 4 * ka_m[-1]**(1/3) + 2) # n_max at the boundary of the particle
+    cn1_array, cn2_array = mc.cn(nn, m_value, ka_m[-1], eta_m[-1]) # c_n at the boundary
 
-    for kr in kr_values:
-        print(f"Computing for kr = {kr:.3e} / {max(kr_values):.3e}")
+    for kr in ka_m:
+        print(f"Computing for kr = {kr:.3e} / {max(ka_m):.3e}")
 
-        n_max = int(kr + 4 * kr**(1/3) + 2)
-
-        if n_max < 1:  # handle very small kr
-            C_a_prime_list.append(0)
-            continue
-
-        n_array = np.arange(1, n_max + 1)
+        n_array = np.arange(1, nn + 1)
 
         eta = m_value * kr
 
-        psi_prime_values = psi_prime_n(n_max, kr)
-        psi_star = np.conj(psi_n(n_max, kr))
+        psi_prime_values = psi_prime_n(nn, eta)
+        psi_star = np.conj(psi_n(nn, eta))
 
         terms = (2 * n_array + 1) * np.real(
             1j * psi_prime_values * psi_star * (
-                m_value * np.abs(cn1_array[-1])**2 + np.conj(m_value) * np.abs(cn2_array[-1])**2
+                m_value * np.abs(cn1_array)**2 + np.conj(m_value) * np.abs(cn2_array)**2
             )
         )
 
         sum_term = np.sum(terms)
-
-        C_a = (-2 * pi) / (np.abs(m_value)**2 * k**2) * sum_term
+        C_a = (2 * pi) / (np.abs(m_value)**2 * k**2) * sum_term
         C_a_prime_list.append(C_a)
 
     results[lam] = C_a_prime_list
 
 # Plotting
-plt.figure(figsize=(8, 6))
-for lam in wavelengths:
-    plt.plot(kr_values, results[lam], label=f'λ = {lam * 1e9:.0f} nm')
-
+plt.figure(0)
+plt.plot(ka_m, results[wavelengths[0]], label=f'λ = {wavelengths[0] * 1e9:.0f} nm')
 plt.xlabel('kr')
-plt.ylabel("Q'_a")
+plt.ylabel("C'_a")
+plt.title("Absorption Cross Section $C'_a$ vs $kr$")
+plt.legend()
+plt.grid(True)
+
+plt.figure(1)
+plt.plot(ka_m, results[wavelengths[1]], label=f'λ = {wavelengths[1] * 1e9:.0f} nm')
+plt.xlabel('kr')
+plt.ylabel("C'_a")
+plt.title("Absorption Cross Section $C'_a$ vs $kr$")
+plt.legend()
+plt.grid(True)
+
+plt.figure(2)
+plt.plot(ka_m, results[wavelengths[2]], label=f'λ = {wavelengths[2] * 1e9:.0f} nm')
+plt.xlabel('kr')
+plt.ylabel("C'_a")
 plt.title("Absorption Cross Section $C'_a$ vs $kr$")
 plt.legend()
 plt.grid(True)
